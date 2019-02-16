@@ -8,6 +8,10 @@ verify_ssl = true
 [packages]
 tensorflow-gpu = "==1.4.0"
 keras = "*"
+sklearn = "*"
+pandas = "*"
+numpy = "*"
+tensorflow = "*"
 
 [requires]
 python_version = "3.6"
