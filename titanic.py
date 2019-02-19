@@ -38,13 +38,15 @@ print('the final frame is', dataframe)
 
 # MODEL TRAINING
 kfold = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
+cross_valid = kfold.split(dataframe, target)
+
 
 def experiment(dim, activation, init, epochs, file):
     x = 0
     print(init, activation)
     cvscores = []
     c = 0
-    for train, test in kfold.split(dataframe, target):
+    for train, test in cross_valid:
         print('this is split', c)
         c += 1
         for z in range(0, 5):
@@ -61,9 +63,9 @@ def experiment(dim, activation, init, epochs, file):
                           metrics=['accuracy'])
 
             # Fit the model
-            model.fit(dataframe[train], target[train], epochs=epochs, batch_size=128, verbose=0,
-                      callbacks=[EarlyStopping(monitor='loss',
-                                               min_delta=-.000001,
+            model.fit(dataframe[train], target[train], validation_data=test, epochs=epochs, batch_size=128, verbose=0,
+                      callbacks=[EarlyStopping(monitor='val_loss',
+                                               min_delta=.000001,
                                                patience=30,
                                                verbose=0, mode='auto')])
 
@@ -72,7 +74,7 @@ def experiment(dim, activation, init, epochs, file):
             print("%s: %.2f%%" % (model.metrics_names[1], scores[1] * 100))
             cvscores.append(scores[1] * 100)
 
-            model.save(file+'_split'+str(c)+'_'+str(z)+'.h5')
+            model.save(file + '_split' + str(c) + '_' + str(z) + '.h5')
             x += 1
     print("%.2f%% (+/- %.2f%%)" % (numpy.mean(cvscores), numpy.std(cvscores)))
 
