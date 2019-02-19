@@ -6,7 +6,7 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-tensorflow-gpu = "==1.4.0"
+tensorflow-gpu = "==1.9.0"
 keras = "*"
 sklearn = "*"
 pandas = "*"
