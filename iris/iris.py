@@ -17,7 +17,7 @@ numpy.random.seed(seed)
 
 # PREPROCESSING
 
-dataframe = pandas.read_csv('Iris.csv')
+dataframe = pandas.read_csv('D:/PycharmProjects/ap-research/iris/Iris.csv')
 target = dataframe['iris'].values
 preprocess_output = make_column_transformer(
     (OneHotEncoder(), ['iris'])

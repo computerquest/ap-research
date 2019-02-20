@@ -17,7 +17,7 @@ numpy.random.seed(seed)
 
 # PREPROCESSING
 
-a = pandas.read_csv('bank-additional-full.csv')
+a = pandas.read_csv('D:/PycharmProjects/ap-research/bank/bank-additional-full.csv')
 del a['duration']
 del a['contact']
 del a['month']
