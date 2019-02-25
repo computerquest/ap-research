@@ -14,6 +14,7 @@ from keras.layers import Dense, Dropout
 from keras.optimizers import RMSprop
 import tensorflow as tf
 
+
 sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
 batch_size = 128
 num_classes = 10
