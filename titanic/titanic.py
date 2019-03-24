@@ -37,28 +37,27 @@ print('the final frame is', dataframe)
 kfold = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
 cross_valid = list(kfold.split(dataframe, target))
 
-
+print(len(cross_valid))
 def experiment(dim, activation, init, epochs, file):
     x = 0
     print(init, activation)
     cvscores = []
     c = 0
     for train, test in cross_valid:
-        print('this is split', c)
         c += 1
         for z in range(0, 5):
             # create model
             model = Sequential()
             model.add(Dense(dim[0], input_dim=12, kernel_initializer=init, activation=activation))
-            for c in range(1, len(dim) - 1):
-                model.add(Dense(dim[c], kernel_initializer=init, activation=activation))
+            for d in range(1, len(dim) - 1):
+                model.add(Dense(dim[d], kernel_initializer=init, activation=activation))
 
             model.add(Dense(dim[-1], kernel_initializer=init, activation=activation))
 
             # Compile model
             model.compile(loss='mean_squared_error',
-                          optimizer=keras.optimizers.SGD(lr=0.01, momentum=0.0, decay=0.0, nesterov=False),
-                          metrics=['accuracy'])
+                          optimizer=keras.optimizers.SGD(lr=0.005, momentum=0.0, decay=0.0, nesterov=False),
+                          metrics=['accuracy']) #lowered the learning rate from .01 for large
 
             model.save('D:/PycharmProjects/ap-research/titanic/weights/'+file + '_split' + str(c) + '_' + str(z) + '.h5')
 
@@ -79,7 +78,7 @@ def experiment(dim, activation, init, epochs, file):
     print("%.2f%% (+/- %.2f%%)" % (numpy.mean(cvscores), numpy.std(cvscores)))
 
 
-print('small')
+'''print('small')
 experiment([5, 1], 'sigmoid', 'random_normal', 100000, 'small/rand_sig')
 experiment([5, 1], 'relu', 'random_normal', 100000, 'small/rand_relu')
 experiment([5, 1], 'sigmoid', 'glorot_normal', 100000, 'small/xavier')
@@ -89,7 +88,7 @@ print('medium')
 experiment([10, 1], 'sigmoid', 'random_normal', 100000, 'medium/rand_sig')
 experiment([10, 1], 'relu', 'random_normal', 100000, 'medium/rand_relu')
 experiment([10, 1], 'sigmoid', 'glorot_normal', 100000, 'medium/xavier')
-experiment([10, 1], 'relu', 'he_normal', 100000, 'medium/he')
+experiment([10, 1], 'relu', 'he_normal', 100000, 'medium/he')'''
 
 print('large')
 experiment([10, 5, 1], 'sigmoid', 'random_normal', 100000, 'large/rand_sig')

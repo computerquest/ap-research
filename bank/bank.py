@@ -61,8 +61,8 @@ def experiment(dim, activation, init, epochs, file):
             # create model
             model = Sequential()
             model.add(Dense(dim[0], input_dim=30, kernel_initializer=init, activation=activation))
-            for c in range(1, len(dim) - 1):
-                model.add(Dense(dim[c], kernel_initializer=init, activation=activation))
+            for d in range(1, len(dim) - 1):
+                model.add(Dense(dim[d], kernel_initializer=init, activation=activation))
             model.add(Dense(dim[-1], kernel_initializer=init, activation=activation))
 
             # Compile model
@@ -90,7 +90,7 @@ def experiment(dim, activation, init, epochs, file):
     print("%.2f%% (+/- %.2f%%)" % (numpy.mean(cvscores), numpy.std(cvscores)))
 
 
-print('small')
+'''print('small')
 experiment([20, 1], 'sigmoid', 'random_normal', 100000, 'small/rand_sig')
 experiment([20, 1], 'relu', 'random_normal', 100000, 'small/rand_relu')
 experiment([20, 1], 'sigmoid', 'glorot_normal', 100000, 'small/xavier')
@@ -100,7 +100,7 @@ print('medium')
 experiment([30, 1], 'sigmoid', 'random_normal', 100000, 'medium/rand_sig')
 experiment([30, 1], 'relu', 'random_normal', 100000, 'medium/rand_relu')
 experiment([30, 1], 'sigmoid', 'glorot_normal', 100000, 'medium/xavier')
-experiment([30, 1], 'relu', 'he_normal', 100000, 'medium/he')
+experiment([30, 1], 'relu', 'he_normal', 100000, 'medium/he')'''
 
 print('large')
 experiment([30, 10, 1], 'sigmoid', 'random_normal', 100000, 'large/rand_sig')

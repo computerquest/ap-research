@@ -51,14 +51,14 @@ def experiment(dim, activation, init, epochs, file):
     cvscores = []
     c = 0
     for train, test in cross_valid:
-        print('this is split', c)
         c += 1
+        print('this is split', c)
         for z in range(0, 5):
             # create model
             model = Sequential()
             model.add(Dense(dim[0], input_dim=4, kernel_initializer=init, activation=activation))
-            for c in range(1, len(dim) - 1):
-                model.add(Dense(dim[c], kernel_initializer=init, activation=activation))
+            for d in range(1, len(dim) - 1):
+                model.add(Dense(dim[d], kernel_initializer=init, activation=activation))
             model.add(Dense(dim[-1], kernel_initializer=init, activation=activation))
 
             # Compile model
@@ -84,7 +84,7 @@ def experiment(dim, activation, init, epochs, file):
             x += 1
     print("%.2f%% (+/- %.2f%%)" % (numpy.mean(cvscores), numpy.std(cvscores)))
 
-print('small')
+'''print('small')
 experiment([10, 3], 'sigmoid', 'random_normal', 25000, 'small/rand_sig')
 experiment([10, 3], 'relu', 'random_normal', 25000, 'small/rand_relu')
 experiment([10, 3], 'sigmoid', 'glorot_normal', 25000, 'small/xavier')
@@ -94,7 +94,7 @@ print('medium')
 experiment([20, 3], 'sigmoid', 'random_normal', 25000, 'medium/rand_sig')
 experiment([20, 3], 'relu', 'random_normal', 25000, 'medium/rand_relu')
 experiment([20, 3], 'sigmoid', 'glorot_normal', 25000, 'medium/xavier')
-experiment([20, 3], 'relu', 'he_normal', 25000, 'medium/he')
+experiment([20, 3], 'relu', 'he_normal', 25000, 'medium/he')'''
 
 print('large')
 experiment([20, 10, 3], 'sigmoid', 'random_normal', 25000, 'large/rand_sig')
