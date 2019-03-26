@@ -11,27 +11,31 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 np.random.seed(19680801)
 
 num_param = -1
-
 seed = 7
 
 # PREPROCESSING
 
-a = pandas.read_csv('/home/jstigter/PycharmProjects/ap-research/titanic/titanic.csv')
-del a['passengerid']
-del a['cabin']
-del a['name']
+dataframe = pandas.read_csv('/home/jstigter/PycharmProjects/ap-research/iris/Iris.csv')
+target = dataframe['iris'].values
+preprocess_output = make_column_transformer(
+    (OneHotEncoder(), ['iris'])
+)
+targetA = preprocess_output.fit_transform(dataframe)
+print('the target is ', target)
 
-dataframe = a.dropna(subset=['pclass', 'sex', 'age', 'sibsp', 'parch', 'fare', 'embarked'])
-
-target = dataframe['survived'].values
-features = dataframe[['pclass', 'sex', 'age', 'fare', 'embarked', 'sibsp', 'parch']]
+features = dataframe[['sepal length', 'sepal width', 'petal length', 'petal width']]
 
 preprocess = make_column_transformer(
-    (StandardScaler(), ['age', 'fare', 'sibsp', 'parch']),
-    (OneHotEncoder(), ['pclass', 'sex', 'embarked'])
+    (StandardScaler(), ['sepal length', 'sepal width', 'petal length', 'petal width'])
 )
 
 dataframe = preprocess.fit_transform(features)
+print('the final frame is', dataframe)
+
+preprocess_output = make_column_transformer(
+    (OneHotEncoder(), ['iris'])
+)
+target = targetA
 
 def weight_delta(size, main):
     global num_param
@@ -42,11 +46,11 @@ def weight_delta(size, main):
         temp = []
         for x in range(0, 5):
             modelb = load_model(
-                '/home/jstigter/PycharmProjects/ap-research/titanic/titanic_results/' + size + '/' + main + '_split' + str(split) + '_' + str(
+                '/home/jstigter/PycharmProjects/ap-research/iris/iris_results/' + size + '/' + main + '_split' + str(split) + '_' + str(
                     x) + '.h5')
             num_param = modelb.count_params()
             modela = load_model(
-                '/home/jstigter/PycharmProjects/ap-research/titanic/weights/' + size + '/' + main + '_split' + str(split) + '_' + str(
+                '/home/jstigter/PycharmProjects/ap-research/iris/weights/' + size + '/' + main + '_split' + str(split) + '_' + str(
                     x) + '.h5')
             # Compile model
             modelb.compile(loss='mean_squared_error',
@@ -67,6 +71,7 @@ def weight_delta(size, main):
                     else:
                         flat_list.append(sublist)
                 this_dif.extend(flat_list)
+
             temp.append(this_dif)
         print('temp size is ', len(temp))
         ans.extend(temp)
@@ -87,7 +92,7 @@ def create_figures(size, init):
     plt.ylabel('Folds', fontsize=16)
 
 
-    #print(num_param)
+    print(num_param)
 
     n_bins = 30
     '''for data in results:
@@ -100,7 +105,7 @@ def create_figures(size, init):
     #plt.xticks(results, list(results.columns.values), rotation='vertical')
     sns.boxplot(data=results, whis=1.5, orient='h')
     plt.xticks()
-    f.savefig('/home/jstigter/PycharmProjects/ap-research/titanic/graphs/boxplot'+size+'.'+init+'_box.png')
+    f.savefig('/home/jstigter/PycharmProjects/ap-research/iris/graphs/boxplot/'+size+'.'+init+'_box.png')
 
     f2 = plt.figure(2, figsize=a4_dims)
 
@@ -111,13 +116,12 @@ def create_figures(size, init):
     plt.ylabel('Relative Frequency', fontsize=16)
 
     combined_data = results.values.flatten()
-    #print(sorted(combined_data, key=abs, reverse=True))
+    print(sorted(combined_data, key=abs, reverse=True))
     plt.hist(combined_data, weights=np.zeros_like(np.array(combined_data)) + 1. / len(combined_data), bins=30, edgecolor='black')
 
-    f2.show()
-    f2.savefig('/home/jstigter/PycharmProjects/ap-research/titanic/graphs/histogram/'+size+'.'+init+'_hist.png')
+    f2.savefig('/home/jstigter/PycharmProjects/ap-research/iris/graphs/histogram/'+size+'.'+init+'_hist.png')
 
-create_figures('large', 'he')
+'''create_figures('large', 'he')
 create_figures('large', 'rand_sig')
 create_figures('large', 'rand_relu')
 create_figures('large', 'xavier')
@@ -129,5 +133,5 @@ create_figures('medium', 'xavier')
 
 create_figures('small', 'he')
 create_figures('small', 'rand_sig')
-create_figures('small', 'rand_relu')
+create_figures('small', 'rand_relu')'''
 create_figures('small', 'xavier')

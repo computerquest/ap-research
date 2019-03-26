@@ -9,44 +9,47 @@ from sklearn.compose import make_column_transformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 np.random.seed(19680801)
-
-num_param = -1
-
 seed = 7
 
 # PREPROCESSING
 
-a = pandas.read_csv('/home/jstigter/PycharmProjects/ap-research/titanic/titanic.csv')
-del a['passengerid']
-del a['cabin']
-del a['name']
+a = pandas.read_csv('/home/jstigter/PycharmProjects/ap-research/bank/bank-additional-full.csv')
+del a['duration']
+del a['contact']
+del a['month']
+del a['day_of_week']
 
-dataframe = a.dropna(subset=['pclass', 'sex', 'age', 'sibsp', 'parch', 'fare', 'embarked'])
-
-target = dataframe['survived'].values
-features = dataframe[['pclass', 'sex', 'age', 'fare', 'embarked', 'sibsp', 'parch']]
+dataframe = a.dropna(
+    subset=["age", "job", "marital", "education", "default", "housing", "loan", "campaign", "pdays", "previous",
+            "poutcome", "emp.var.rate", "cons.price.idx", "cons.conf.idx", "euribor3m", "nr.employed", "y"])
+print('the starter dataframe is ', dataframe.shape)
+target = dataframe['y'].values
+features = dataframe[
+    ["age", "job", "marital", "education", "default", "housing", "loan", "campaign", "pdays", "previous", "poutcome",
+     "emp.var.rate", "cons.price.idx", "cons.conf.idx", "euribor3m", "nr.employed"]]
 
 preprocess = make_column_transformer(
-    (StandardScaler(), ['age', 'fare', 'sibsp', 'parch']),
-    (OneHotEncoder(), ['pclass', 'sex', 'embarked'])
+    (StandardScaler(),
+     ['age', "campaign", "pdays", "previous", "emp.var.rate", "cons.price.idx", "cons.conf.idx", "euribor3m",
+      "nr.employed"]),
+    (OneHotEncoder(), ["job", "marital", "education"])
 )
 
 dataframe = preprocess.fit_transform(features)
 
 def weight_delta(size, main):
     global num_param
-
     ans = []
     column_names = []
     for split in range(1,6):
         temp = []
         for x in range(0, 5):
             modelb = load_model(
-                '/home/jstigter/PycharmProjects/ap-research/titanic/titanic_results/' + size + '/' + main + '_split' + str(split) + '_' + str(
+                '/home/jstigter/PycharmProjects/ap-research/bank/bank_results/' + size + '/' + main + '_split' + str(split) + '_' + str(
                     x) + '.h5')
             num_param = modelb.count_params()
             modela = load_model(
-                '/home/jstigter/PycharmProjects/ap-research/titanic/weights/' + size + '/' + main + '_split' + str(split) + '_' + str(
+                '/home/jstigter/PycharmProjects/ap-research/bank/weights/' + size + '/' + main + '_split' + str(split) + '_' + str(
                     x) + '.h5')
             # Compile model
             modelb.compile(loss='mean_squared_error',
@@ -67,6 +70,7 @@ def weight_delta(size, main):
                     else:
                         flat_list.append(sublist)
                 this_dif.extend(flat_list)
+
             temp.append(this_dif)
         print('temp size is ', len(temp))
         ans.extend(temp)
@@ -86,9 +90,6 @@ def create_figures(size, init):
     plt.xlabel('Δ Weight', fontsize=18)
     plt.ylabel('Folds', fontsize=16)
 
-
-    #print(num_param)
-
     n_bins = 30
     '''for data in results:
         print(data, [x / num_param for x in data], num_param)
@@ -100,7 +101,7 @@ def create_figures(size, init):
     #plt.xticks(results, list(results.columns.values), rotation='vertical')
     sns.boxplot(data=results, whis=1.5, orient='h')
     plt.xticks()
-    f.savefig('/home/jstigter/PycharmProjects/ap-research/titanic/graphs/boxplot'+size+'.'+init+'_box.png')
+    f.savefig('/home/jstigter/PycharmProjects/ap-research/bank/graphs/boxplot/'+size+'.'+init+'_box.png')
 
     f2 = plt.figure(2, figsize=a4_dims)
 
@@ -111,11 +112,10 @@ def create_figures(size, init):
     plt.ylabel('Relative Frequency', fontsize=16)
 
     combined_data = results.values.flatten()
-    #print(sorted(combined_data, key=abs, reverse=True))
+    print(sorted(combined_data, key=abs, reverse=True))
     plt.hist(combined_data, weights=np.zeros_like(np.array(combined_data)) + 1. / len(combined_data), bins=30, edgecolor='black')
 
-    f2.show()
-    f2.savefig('/home/jstigter/PycharmProjects/ap-research/titanic/graphs/histogram/'+size+'.'+init+'_hist.png')
+    f2.savefig('/home/jstigter/PycharmProjects/ap-research/bank/graphs/histogram/'+size+'.'+init+'_hist.png')
 
 create_figures('large', 'he')
 create_figures('large', 'rand_sig')
