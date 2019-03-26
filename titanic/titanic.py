@@ -56,7 +56,7 @@ def experiment(dim, activation, init, epochs, file):
 
             # Compile model
             model.compile(loss='mean_squared_error',
-                          optimizer=keras.optimizers.SGD(lr=0.005, momentum=0.0, decay=0.0, nesterov=False),
+                          optimizer=keras.optimizers.SGD(lr=0.0001, momentum=0.0, decay=0.0, nesterov=False),
                           metrics=['accuracy']) #lowered the learning rate from .01 for large
 
             model.save('D:/PycharmProjects/ap-research/titanic/weights/'+file + '_split' + str(c) + '_' + str(z) + '.h5')
@@ -64,9 +64,9 @@ def experiment(dim, activation, init, epochs, file):
             # Fit the model
             model.fit(dataframe[train], target[train], validation_data=(dataframe[test], target[test]), epochs=epochs, batch_size=128, verbose=0,
                       callbacks=[EarlyStopping(monitor='val_loss',
-                                               min_delta=-.000001,
-                                               patience=3,
-                                               verbose=1, mode='min', restore_best_weights=True)])
+                                               min_delta=0,
+                                               patience=10,
+                                               verbose=1, mode='min', restore_best_weights=True)]) #-.000001 3 for others
 
             # evaluate the model
             scores = model.evaluate(dataframe[test], target[test], verbose=0)
@@ -91,7 +91,7 @@ experiment([10, 1], 'sigmoid', 'glorot_normal', 100000, 'medium/xavier')
 experiment([10, 1], 'relu', 'he_normal', 100000, 'medium/he')'''
 
 print('large')
-experiment([10, 5, 1], 'sigmoid', 'random_normal', 100000, 'large/rand_sig')
+#experiment([10, 5, 1], 'sigmoid', 'random_normal', 100000, 'large/rand_sig')
 experiment([10, 5, 1], 'relu', 'random_normal', 100000, 'large/rand_relu')
-experiment([10, 5, 1], 'sigmoid', 'glorot_normal', 100000, 'large/xavier')
-experiment([10, 5, 1], 'relu', 'he_normal', 100000, 'large/he')
+#experiment([10, 5, 1], 'sigmoid', 'glorot_normal', 100000, 'large/xavier')
+#experiment([10, 5, 1], 'relu', 'he_normal', 100000, 'large/he')
