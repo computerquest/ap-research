@@ -63,7 +63,7 @@ def experiment(dim, activation, init, epochs, file):
 
             # Compile model
             model.compile(loss='mean_squared_error',
-                          optimizer=keras.optimizers.SGD(lr=0.1, momentum=0.0, decay=0.0, nesterov=False),
+                          optimizer=keras.optimizers.SGD(lr=0.01, momentum=0.0, decay=0.0, nesterov=False),
                           metrics=['accuracy'])
 
             model.save('D:/PycharmProjects/ap-research/iris/weights/'+file + '_split' + str(c) + '_' + str(z) + '.h5')
@@ -71,7 +71,7 @@ def experiment(dim, activation, init, epochs, file):
             # Fit the model
             model.fit(dataframe[train], target[train], validation_data=(dataframe[test], target[test]), epochs=epochs, batch_size=128, verbose=0,
                       callbacks=[EarlyStopping(monitor='val_loss',
-                                               min_delta=-.01,
+                                               min_delta=0,
                                                patience=3,
                                                verbose=1, mode='min', restore_best_weights=True)])
 
@@ -83,6 +83,9 @@ def experiment(dim, activation, init, epochs, file):
             model.save('D:/PycharmProjects/ap-research/iris/iris_results/'+file + '_split' + str(c) + '_' + str(z) + '.h5')
             x += 1
     print("%.2f%% (+/- %.2f%%)" % (numpy.mean(cvscores), numpy.std(cvscores)))
+
+experiment([20, 10, 3], 'relu', 'he_normal', 100000, 'large/he')
+experiment([20, 10, 3], 'relu', 'random_normal', 25000, 'large/rand_relu')
 
 '''print('small')
 experiment([10, 3], 'sigmoid', 'random_normal', 25000, 'small/rand_sig')
@@ -96,8 +99,7 @@ experiment([20, 3], 'relu', 'random_normal', 25000, 'medium/rand_relu')
 experiment([20, 3], 'sigmoid', 'glorot_normal', 25000, 'medium/xavier')
 experiment([20, 3], 'relu', 'he_normal', 25000, 'medium/he')'''
 
-print('large')
+'''print('large')
 experiment([20, 10, 3], 'sigmoid', 'random_normal', 25000, 'large/rand_sig')
 experiment([20, 10, 3], 'relu', 'random_normal', 25000, 'large/rand_relu')
-experiment([20, 10, 3], 'sigmoid', 'glorot_normal', 25000, 'large/xavier')
-experiment([20, 10, 3], 'relu', 'he_normal', 25000, 'large/he')
+experiment([20, 10, 3], 'sigmoid', 'glorot_normal', 25000, 'large/xavier')'''
