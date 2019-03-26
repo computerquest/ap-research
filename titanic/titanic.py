@@ -90,8 +90,10 @@ experiment([10, 1], 'relu', 'random_normal', 100000, 'medium/rand_relu')
 experiment([10, 1], 'sigmoid', 'glorot_normal', 100000, 'medium/xavier')
 experiment([10, 1], 'relu', 'he_normal', 100000, 'medium/he')'''
 
+experiment([10, 1], 'relu', 'random_normal', 100000, 'medium/rand_relu')
+
 print('large')
 #experiment([10, 5, 1], 'sigmoid', 'random_normal', 100000, 'large/rand_sig')
-experiment([10, 5, 1], 'relu', 'random_normal', 100000, 'large/rand_relu')
+#experiment([10, 5, 1], 'relu', 'random_normal', 100000, 'large/rand_relu')
 #experiment([10, 5, 1], 'sigmoid', 'glorot_normal', 100000, 'large/xavier')
 #experiment([10, 5, 1], 'relu', 'he_normal', 100000, 'large/he')
