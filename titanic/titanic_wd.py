@@ -44,16 +44,13 @@ def weight_delta(size, main):
             modelb = load_model(
                 '/home/jstigter/PycharmProjects/ap-research/titanic/titanic_results/' + size + '/' + main + '_split' + str(split) + '_' + str(
                     x) + '.h5')
-            num_param = modelb.count_params()
-            modela = load_model(
-                '/home/jstigter/PycharmProjects/ap-research/titanic/weights/' + size + '/' + main + '_split' + str(split) + '_' + str(
-                    x) + '.h5')
+
             # Compile model
             modelb.compile(loss='mean_squared_error',
                           optimizer=keras.optimizers.SGD(lr=0.005, momentum=0.0, decay=0.0, nesterov=False),
                           metrics=['accuracy']) #lowered the learning rate from .01 for large
 
-            difs = np.subtract(modela.get_weights(), modelb.get_weights())
+            difs = modelb.get_weights()
 
             column_names.append('Fold: '+str(split)+' '+' '+ str(x)+' '+str(round(modelb.evaluate(dataframe,target)[1]*100)))
 
@@ -83,11 +80,11 @@ def create_figures(size, init):
 
     f = plt.figure(1, figsize=a4_dims)
 
-    plt.xlabel('Δ Weight', fontsize=18)
+    plt.xlabel('Weights', fontsize=18)
     plt.ylabel('Folds', fontsize=16)
 
 
-    #print(num_param)
+    print(num_param)
 
     n_bins = 30
     '''for data in results:
@@ -100,22 +97,25 @@ def create_figures(size, init):
     #plt.xticks(results, list(results.columns.values), rotation='vertical')
     sns.boxplot(data=results, whis=1.5, orient='h')
     plt.xticks()
-    f.savefig('/home/jstigter/PycharmProjects/ap-research/titanic/graphs/boxplot'+size+'.'+init+'_box.png')
+    f.show()
+    f.savefig('/home/jstigter/PycharmProjects/ap-research/titanic/graphs/after_box/'+size+'.'+init+'_box.png')
 
     f2 = plt.figure(2, figsize=a4_dims)
 
-    plt.xlim([-5,5])
-    plt.ylim([0,1])
-
-    plt.xlabel('Δ Weight', fontsize=18)
-    plt.ylabel('Relative Frequency', fontsize=16)
-
     combined_data = results.values.flatten()
-    #print(sorted(combined_data, key=abs, reverse=True))
-    plt.hist(combined_data, weights=np.zeros_like(np.array(combined_data)) + 1. / len(combined_data), bins=30, edgecolor='black')
+
+    plt.xlim([-5,5])
+    plt.ylim([0,len(combined_data)])
+
+
+    plt.xlabel('Weight', fontsize=18)
+    plt.ylabel('Frequency', fontsize=16)
+
+    print(sorted(combined_data, key=abs, reverse=True))
+    plt.hist(combined_data, bins=30, edgecolor='black')
 
     f2.show()
-    f2.savefig('/home/jstigter/PycharmProjects/ap-research/titanic/graphs/histogram/'+size+'.'+init+'_hist.png')
+    f2.savefig('/home/jstigter/PycharmProjects/ap-research/titanic/graphs/after_hist/'+size+'.'+init+'_hist.png')
 
 create_figures('large', 'he')
 create_figures('large', 'rand_sig')
