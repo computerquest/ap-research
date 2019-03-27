@@ -121,6 +121,9 @@ def create_figures(size, init):
     f2.show()
     f2.savefig('/home/jstigter/PycharmProjects/ap-research/iris/graphs/after_hist/'+size+'.'+init+'_hist.png')
 
+create_figures('large', 'rand_relu')
+create_figures('large', 'he')
+
 '''create_figures('large', 'he')
 create_figures('large', 'rand_sig')
 create_figures('large', 'rand_relu')
@@ -133,5 +136,5 @@ create_figures('medium', 'xavier')
 
 create_figures('small', 'he')
 create_figures('small', 'rand_sig')
-create_figures('small', 'rand_relu')'''
-create_figures('small', 'xavier')
+create_figures('small', 'rand_relu')
+create_figures('small', 'xavier')'''
