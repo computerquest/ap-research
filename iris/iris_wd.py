@@ -103,12 +103,13 @@ def create_figures(size, init):
     plt.xticks()
     f.show()
     f.savefig('/home/jstigter/PycharmProjects/ap-research/iris/graphs/after_box/'+size+'.'+init+'_box.png')
+    f.clear()
 
     f2 = plt.figure(2, figsize=a4_dims)
 
     combined_data = results.values.flatten()
 
-    plt.xlim([-5,5])
+    plt.xlim([-3,3])
     plt.ylim([0,len(combined_data)])
 
 
@@ -120,6 +121,7 @@ def create_figures(size, init):
 
     f2.show()
     f2.savefig('/home/jstigter/PycharmProjects/ap-research/iris/graphs/after_hist/'+size+'.'+init+'_hist.png')
+    f2.clear()
 
 create_figures('large', 'rand_relu')
 create_figures('large', 'he')

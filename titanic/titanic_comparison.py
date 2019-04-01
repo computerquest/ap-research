@@ -101,10 +101,11 @@ def create_figures(size, init):
     sns.boxplot(data=results, whis=1.5, orient='h')
     plt.xticks()
     f.savefig('/home/jstigter/PycharmProjects/ap-research/titanic/graphs/boxplot'+size+'.'+init+'_box.png')
+    f.clear()
 
     f2 = plt.figure(2, figsize=a4_dims)
 
-    plt.xlim([-5,5])
+    plt.xlim([-3,3])
     plt.ylim([0,1])
 
     plt.xlabel('Δ Weight', fontsize=18)
@@ -116,6 +117,7 @@ def create_figures(size, init):
 
     f2.show()
     f2.savefig('/home/jstigter/PycharmProjects/ap-research/titanic/graphs/histogram/'+size+'.'+init+'_hist.png')
+    f2.clear()
 
 create_figures('large', 'he')
 create_figures('large', 'rand_sig')

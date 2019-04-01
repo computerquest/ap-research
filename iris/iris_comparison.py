@@ -106,10 +106,11 @@ def create_figures(size, init):
     sns.boxplot(data=results, whis=1.5, orient='h')
     plt.xticks()
     f.savefig('/home/jstigter/PycharmProjects/ap-research/iris/graphs/boxplot/'+size+'.'+init+'_box.png')
+    f.clear()
 
     f2 = plt.figure(2, figsize=a4_dims)
 
-    plt.xlim([-5,5])
+    plt.xlim([-3,3])
     plt.ylim([0,1])
 
     plt.xlabel('Δ Weight', fontsize=18)
@@ -120,6 +121,7 @@ def create_figures(size, init):
     plt.hist(combined_data, weights=np.zeros_like(np.array(combined_data)) + 1. / len(combined_data), bins=30, edgecolor='black')
 
     f2.savefig('/home/jstigter/PycharmProjects/ap-research/iris/graphs/histogram/'+size+'.'+init+'_hist.png')
+    f2.clear()
 
 create_figures('large', 'rand_relu')
 create_figures('large', 'he')
