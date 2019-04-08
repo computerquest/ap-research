@@ -12,7 +12,7 @@ import pandas
 def create_pruned_graphs(totNode, num_input, model_size, model_type, model_split, model_rep):
     min_weight = .01
     modelb = load_model(
-        '/home/jstigter/PycharmProjects/ap-research/titanic/titanic_results/' + model_size + '/' + model_type + '_split' + str(
+        '/home/jstigter/PycharmProjects/ap-research/iris/iris_results/' + model_size + '/' + model_type + '_split' + str(
             model_split) + '_' + str(
             model_rep) + '.h5')
 
@@ -128,12 +128,13 @@ def generate_files(size, num_node, num_input):
         result = ged.compare(all_net, None)
 
         pd = pandas.DataFrame(result)
-        pd.to_csv('prune_results/'+size + '.' + str(x) + '.csv')
+        pd.to_csv('prune_results/' + size + '.' + str(x) + '.csv')
 
         print(*result)
 
 
-generate_files('medium', 11, 12)
-generate_files('large', 16, 12)
+generate_files('small', 13, 4)
+generate_files('medium', 23, 4)
+generate_files('large', 33, 4)
 
 print('done')
