@@ -48,13 +48,24 @@ preprocess = make_column_transformer(
 
 dataframe = preprocess.fit_transform(features)
 
+before = 0
+missing_index = []
+
+
 def create_pruned_graphs(totNode, num_input, model_size, model_type, model_split, model_rep):
+    global  dataframe
+    global target
+
     min_weight = .01
     modelb = load_model(
         '/home/jstigter/PycharmProjects/ap-research/bank/bank_results/' + model_size + '/' + model_type + '_split' + str(
             model_split) + '_' + str(
             model_rep) + '.h5')
 
+    # Compile model
+    modelb.compile(loss='mean_squared_error',
+                   optimizer=keras.optimizers.SGD(lr=0.005, momentum=0.0, decay=0.0, nesterov=False),
+                   metrics=['accuracy'])  # lowered the learning rate from .01 for large
     # modelb.summary()
     fit = round(modelb.evaluate(dataframe, target, steps=1)[1] * 100)
     print('fit is ', fit)
@@ -106,13 +117,17 @@ def create_pruned_graphs(totNode, num_input, model_size, model_type, model_split
 
 def test_split(totNode, num_input, model_size, model_type, model_split):
     g = []
+    global before
 
+    global missing_index
     for i in range(0, 5):
         graph = create_pruned_graphs(totNode, num_input, model_size, model_type, model_split, i)
 
         if graph != None:
             print('adding type', type(graph))
             g.append(graph)
+        else:
+            missing_index.append(i + round * 5)
 
     ged = gm.GraphEditDistance(1, 1, 1, 1)  # all edit costs are equal to 1
     result = ged.compare(g, None)
@@ -178,12 +193,16 @@ def generate_files(size, num_node, num_input):
         result = ged.compare(all_net, None)
 
         pd = pandas.DataFrame(result)
+
+        for i in missing_index:
+            pd.insert(i, column=str(-i), value=[0 for z in result])
+
         pd.to_csv('prune_results/' + size + '.' + str(x) + '.csv')
 
         print(*result)
 
 
-generate_files('small', 21, 30)
+#generate_files('small', 21, 30)
 generate_files('medium', 31, 30)
 generate_files('large', 41, 30)
 
