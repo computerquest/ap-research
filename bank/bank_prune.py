@@ -8,6 +8,45 @@ import matplotlib.pyplot as plt
 import csv
 import pandas
 
+import keras
+from keras.models import load_model
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from scipy import stats
+import pandas
+from sklearn.compose import make_column_transformer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+np.random.seed(19680801)
+
+seed = 7
+
+# PREPROCESSING
+
+a = pandas.read_csv('/home/jstigter/PycharmProjects/ap-research/bank/bank-additional-full.csv')
+del a['duration']
+del a['contact']
+del a['month']
+del a['day_of_week']
+
+dataframe = a.dropna(
+    subset=["age", "job", "marital", "education", "default", "housing", "loan", "campaign", "pdays", "previous",
+            "poutcome", "emp.var.rate", "cons.price.idx", "cons.conf.idx", "euribor3m", "nr.employed", "y"])
+print('the starter dataframe is ', dataframe.shape)
+target = dataframe['y'].values
+features = dataframe[
+    ["age", "job", "marital", "education", "default", "housing", "loan", "campaign", "pdays", "previous", "poutcome",
+     "emp.var.rate", "cons.price.idx", "cons.conf.idx", "euribor3m", "nr.employed"]]
+
+preprocess = make_column_transformer(
+    (StandardScaler(),
+     ['age', "campaign", "pdays", "previous", "emp.var.rate", "cons.price.idx", "cons.conf.idx", "euribor3m",
+      "nr.employed"]),
+    (OneHotEncoder(), ["job", "marital", "education"])
+)
+
+dataframe = preprocess.fit_transform(features)
 
 def create_pruned_graphs(totNode, num_input, model_size, model_type, model_split, model_rep):
     min_weight = .01
@@ -17,6 +56,10 @@ def create_pruned_graphs(totNode, num_input, model_size, model_type, model_split
             model_rep) + '.h5')
 
     # modelb.summary()
+    fit = round(modelb.evaluate(dataframe, target, steps=1)[1] * 100)
+    print('fit is ', fit)
+    if fit <= 66:
+        return None
 
     totNode += 1  # this is because keras treats all biases like additional nodes
     totNode += num_input
@@ -65,7 +108,11 @@ def test_split(totNode, num_input, model_size, model_type, model_split):
     g = []
 
     for i in range(0, 5):
-        g.append(create_pruned_graphs(totNode, num_input, model_size, model_type, model_split, i))
+        graph = create_pruned_graphs(totNode, num_input, model_size, model_type, model_split, i)
+
+        if graph != None:
+            print('adding type', type(graph))
+            g.append(graph)
 
     ged = gm.GraphEditDistance(1, 1, 1, 1)  # all edit costs are equal to 1
     result = ged.compare(g, None)
@@ -79,8 +126,11 @@ def test_type(totNode, num_input, model_size, model_type):
 
     for x in range(1, 6):
         for i in range(0, 5):
-            g.append(create_pruned_graphs(totNode, num_input, model_size, model_type, x, i))
+            graph = create_pruned_graphs(totNode, num_input, model_size, model_type, x, i)
 
+            if graph != None:
+                print('adding type', type(graph))
+                g.append(g)
     ged = gm.GraphEditDistance(1, 1, 1, 1)  # all edit costs are equal to 1
     result = ged.compare(g, None)
     print(result)

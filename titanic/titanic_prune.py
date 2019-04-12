@@ -7,6 +7,37 @@ import gmatch4py as gm
 import matplotlib.pyplot as plt
 import csv
 import pandas
+from keras.models import load_model
+import numpy as np
+
+import pandas
+from sklearn.compose import make_column_transformer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+np.random.seed(19680801)
+
+num_param = -1
+
+seed = 7
+
+# PREPROCESSING
+
+a = pandas.read_csv('/home/jstigter/PycharmProjects/ap-research/titanic/titanic.csv')
+del a['passengerid']
+del a['cabin']
+del a['name']
+
+dataframe = a.dropna(subset=['pclass', 'sex', 'age', 'sibsp', 'parch', 'fare', 'embarked'])
+
+target = dataframe['survived'].values
+features = dataframe[['pclass', 'sex', 'age', 'fare', 'embarked', 'sibsp', 'parch']]
+
+preprocess = make_column_transformer(
+    (StandardScaler(), ['age', 'fare', 'sibsp', 'parch']),
+    (OneHotEncoder(), ['pclass', 'sex', 'embarked'])
+)
+
+dataframe = preprocess.fit_transform(features)
 
 
 def create_pruned_graphs(totNode, num_input, model_size, model_type, model_split, model_rep):
@@ -15,6 +46,11 @@ def create_pruned_graphs(totNode, num_input, model_size, model_type, model_split
         '/home/jstigter/PycharmProjects/ap-research/titanic/titanic_results/' + model_size + '/' + model_type + '_split' + str(
             model_split) + '_' + str(
             model_rep) + '.h5')
+
+    fit = round(modelb.evaluate(dataframe, target, steps=1)[1] * 100)
+    print('fit is ', fit)
+    if fit <= 66:
+        return None
 
     # modelb.summary()
 
@@ -65,7 +101,11 @@ def test_split(totNode, num_input, model_size, model_type, model_split):
     g = []
 
     for i in range(0, 5):
-        g.append(create_pruned_graphs(totNode, num_input, model_size, model_type, model_split, i))
+        graph = create_pruned_graphs(totNode, num_input, model_size, model_type, model_split, i)
+
+        if graph != None:
+            print('adding type', type(graph))
+            g.append(graph)
 
     ged = gm.GraphEditDistance(1, 1, 1, 1)  # all edit costs are equal to 1
     result = ged.compare(g, None)
@@ -79,7 +119,11 @@ def test_type(totNode, num_input, model_size, model_type):
 
     for x in range(1, 6):
         for i in range(0, 5):
-            g.append(create_pruned_graphs(totNode, num_input, model_size, model_type, x, i))
+            graph = create_pruned_graphs(totNode, num_input, model_size, model_type, x, i)
+
+            if graph != None:
+                print('adding type', type(graph))
+                g.append(g)
 
     ged = gm.GraphEditDistance(1, 1, 1, 1)  # all edit costs are equal to 1
     result = ged.compare(g, None)
@@ -128,12 +172,13 @@ def generate_files(size, num_node, num_input):
         result = ged.compare(all_net, None)
 
         pd = pandas.DataFrame(result)
-        pd.to_csv('prune_results/'+size + '.' + str(x) + '.csv')
+        pd.to_csv('prune_results/' + size + '.' + str(x) + '.csv')
 
         print(*result)
 
 
-generate_files('medium', 11, 12)
-generate_files('large', 16, 12)
+generate_files('small', 6, 12)
+#generate_files('medium', 11, 12)
+#generate_files('large', 16, 12)
 
 print('done')

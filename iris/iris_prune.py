@@ -7,7 +7,44 @@ import gmatch4py as gm
 import matplotlib.pyplot as plt
 import csv
 import pandas
+import keras
+from keras.models import load_model
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from scipy import stats
+import pandas
+from sklearn.compose import make_column_transformer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
+np.random.seed(19680801)
+
+num_param = -1
+seed = 7
+
+# PREPROCESSING
+
+dataframe = pandas.read_csv('/home/jstigter/PycharmProjects/ap-research/iris/Iris.csv')
+target = dataframe['iris'].values
+preprocess_output = make_column_transformer(
+    (OneHotEncoder(), ['iris'])
+)
+targetA = preprocess_output.fit_transform(dataframe)
+print('the target is ', target)
+
+features = dataframe[['sepal length', 'sepal width', 'petal length', 'petal width']]
+
+preprocess = make_column_transformer(
+    (StandardScaler(), ['sepal length', 'sepal width', 'petal length', 'petal width'])
+)
+
+dataframe = preprocess.fit_transform(features)
+print('the final frame is', dataframe)
+
+preprocess_output = make_column_transformer(
+    (OneHotEncoder(), ['iris'])
+)
+target = targetA
 
 def create_pruned_graphs(totNode, num_input, model_size, model_type, model_split, model_rep):
     min_weight = .01
@@ -17,6 +54,10 @@ def create_pruned_graphs(totNode, num_input, model_size, model_type, model_split
             model_rep) + '.h5')
 
     # modelb.summary()
+    fit = round(modelb.evaluate(dataframe, target, steps=1)[1] * 100)
+    print('fit is ', fit)
+    if fit <= 66:
+        return None
 
     totNode += 1  # this is because keras treats all biases like additional nodes
     totNode += num_input
@@ -65,7 +106,11 @@ def test_split(totNode, num_input, model_size, model_type, model_split):
     g = []
 
     for i in range(0, 5):
-        g.append(create_pruned_graphs(totNode, num_input, model_size, model_type, model_split, i))
+        graph = create_pruned_graphs(totNode, num_input, model_size, model_type, model_split, i)
+
+        if graph != None:
+            print('adding type', type(graph))
+            g.append(graph)
 
     ged = gm.GraphEditDistance(1, 1, 1, 1)  # all edit costs are equal to 1
     result = ged.compare(g, None)
@@ -79,8 +124,11 @@ def test_type(totNode, num_input, model_size, model_type):
 
     for x in range(1, 6):
         for i in range(0, 5):
-            g.append(create_pruned_graphs(totNode, num_input, model_size, model_type, x, i))
+            graph = create_pruned_graphs(totNode, num_input, model_size, model_type, x, i)
 
+            if graph != None:
+                print('adding type', type(graph))
+                g.append(g)
     ged = gm.GraphEditDistance(1, 1, 1, 1)  # all edit costs are equal to 1
     result = ged.compare(g, None)
     print(result)
