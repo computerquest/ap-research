@@ -109,6 +109,8 @@ def create_pruned_graphs(totNode, num_input, model_size, model_type, model_split
 
 def test_split(totNode, num_input, model_size, model_type, model_split):
     g = []
+    global before
+    print('before', before)
 
     for i in range(0, 5):
         graph = create_pruned_graphs(totNode, num_input, model_size, model_type, model_split, i)
@@ -128,7 +130,7 @@ def test_split(totNode, num_input, model_size, model_type, model_split):
 
 def test_type(totNode, num_input, model_size, model_type):
     g = []
-
+    print('before', before)
     for x in range(1, 6):
         for i in range(0, 5):
             graph = create_pruned_graphs(totNode, num_input, model_size, model_type, x, i)
@@ -163,6 +165,8 @@ print(*result)'''
 
 def generate_files(size, num_node, num_input):
     global before
+    global missing_index
+
     for x in range(1, 6):
         all_net = []
 
@@ -201,6 +205,7 @@ def generate_files(size, num_node, num_input):
         print(*result)
 
         before = 0
+        missing_index = []
 
 generate_files('large', 16, 12)
 
