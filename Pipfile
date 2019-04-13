@@ -12,6 +12,7 @@ sklearn = "*"
 pandas = "*"
 numpy = "*"
 tensorflow = "*"
+kerassurgeon = "*"
 
 [requires]
 python_version = "3.6"
